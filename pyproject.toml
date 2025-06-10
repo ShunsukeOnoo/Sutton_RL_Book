@@ -1,0 +1,31 @@
+[project]
+name = "rl-book"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "ShunsukeOnoo", email = "shunsuke.ono.00@gmail.com" }
+]
+dependencies = [
+    "numpy>=2.3.0",
+    "pandas>=2.3.0",
+    "matplotlib>=3.10.3",
+    "torch>=2.7.1",
+    "gymnasium>=1.1.1",
+    "ipykernel>=6.29.5",
+]
+readme = "README.md"
+requires-python = ">= 3.11"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rl_book"]
