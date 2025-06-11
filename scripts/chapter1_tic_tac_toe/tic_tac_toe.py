@@ -1,13 +1,14 @@
 """
-Tick-tack-toe environment
+Tic-tac-toe environment
 """
+from collections import defaultdict
 import numpy as np
 import gymnasium as gym
-
+import tqdm
 
 class TicTacToeEnv(gym.Env):
     """
-    Tick-tack-toe environment.
+    Tic-tac-toe environment.
 
     There are two players, player 1 and player -1.
     - Player 1 places 1, player -1 places -1 on the board.
@@ -178,3 +179,126 @@ def cli_play():
         cli_play()
     else:
         print("Thanks for playing!")
+
+    
+def train_td(num_episodes: int, alpha: float, epsilon: float) -> dict:
+    """
+    Train a simple agent on the TicTacToe environment with
+    Temporal Difference (TD) learning with epsilon-greedy policy.
+    The agent is trained by playing against itself.
+
+    Unlike normal game environments, tic-tac-toe involves two players,
+    which makes it a bit more complex. In this environment, two steps are
+    equal to one step from the perspective of one player, which means we have to
+    wait for two steps to update the value function for one player. To handle this,
+    we use a buffer that store the trajectory of the last two steps.
+
+    Also, note that the observation space for each player is not the same.
+    The first player always sees the board with even number of pieces,
+    while the second player sees the board with odd number of pieces.
+
+    Args:
+        num_episodes: Number of episodes to train the agent.
+        alpha: Leraning rate.
+        epsilon: Exploration rate. Choose a random action with this probability.
+    Returns:
+        dict: A table that maps state to action values.
+    """
+    # value function: 
+    # TODO: should we use action-value function?
+    # TODO: we want to use smarter representation of the state than tuple(state.flatten())
+    # tuple of the board state to its estimated value
+    V = defaultdict(lambda: 0.0)
+
+    # environment
+    env = TicTacToeEnv()
+
+    # start training
+    for episode in tqdm.tqdm(range(num_episodes), total=num_episodes, desc="Training", dynamic_ncols=True):
+        # buffer to store the trajectory of the last two steps
+        # each step is a state-action pair
+        buffer = []  
+        obs, info = env.reset()
+        done = False
+
+        while not done:
+            # choose action using epsilon-greedy policy
+            if np.random.rand() < epsilon:
+                # with probability epsilon, choose a random action (exploration)
+                valid_actions = get_valid_actions(obs)
+                action = np.random.choice(valid_actions)
+            else:
+                # otherwise, choose the estimated best action (greedy exploitation)
+                action = get_best_action(obs, V, info['player'])
+
+            # perform the action and step the environment
+            next_obs, reward, done, _, next_info = env.step(action)
+
+            # store the state-action pair in the trajectory
+            buffer.append((obs, action))
+
+            # TODO: update the value function using TD learning
+            # we use that the reward is 0 for all steps except the last one
+            if done:
+                # update the value function for the last state in the buffer
+                last_state, last_action = buffer[-1]
+                V[tuple(last_state.flatten())] += alpha * (reward - V[tuple(last_state.flatten())])
+            else:
+                # update the value function for the second to last state in the buffer
+                second_last_state, second_last_action = buffer[-2]
+                V[tuple(second_last_state.flatten())] += alpha * (V[tuple(next_obs.flatten())] - V[tuple(second_last_state.flatten())])
+            
+            # move to the next state
+            obs = next_obs
+            info = next_info
+
+    return V
+
+
+def get_valid_actions(state: np.ndarray) -> list:
+    """
+    Get a list of valid actions for the current state.
+    Valid actions are those positions on the board that are empty (0).
+
+    Args:
+        state: Current state of the board.
+    Returns:
+        list: List of valid actions (integers from 0 to 8).
+    """
+    # TODO: implement this function
+    pass
+            
+
+def get_best_action(state: np.ndarray, V: dict, player: int) -> int:
+    """
+    Find the best action for the given state using the value function V.
+
+    Args:
+        state: Current state of the board.
+        V: Value function mapping states to action values.
+        player: Current player (1 or -1).
+    Returns:
+        int: The best action to take in the current state.
+    """
+    values = np.zeros(9)  # value for each action
+
+    # iterate over all valid actions
+    for action in get_valid_actions(state):
+        next_state = state_transition(state, action, player)
+        value = V[tuple(next_state.flatten())]
+        values[action] = value
+    
+    # choose the action with the highest value
+    best_action = np.argmax(values)
+    return best_action
+
+
+def state_transition(state: np.ndarray, action: int, player: int) -> np.ndarray:
+    """
+    Estimate the next state given the current state.
+    Used for estimating the value of a state-action pair.
+    """
+    next_state = state.copy()
+    row, col = divmod(action, 3)
+    next_state[row, col] = player
+    return next_state

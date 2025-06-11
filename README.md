@@ -15,9 +15,9 @@ Dependencies are specified in `pyproject.toml` and managed using `rye`. You can 
 ## Progress Chart
 ## ✅ Progress Chart
 
-| Chapter | Title                                             | Status      | Notes / Key Algorithms                                     |
+| Chapter | Title                                             | Status      | Contents                                     |
 |---------|---------------------------------------------------|-------------|-------------------------------------------------------------|
-| 1       | Introduction                                      | ⬜ TODO     |  |
+| 1       | Introduction                                      | ⬜ TODO     | Tic-tac-toe environment. Working on a simple TD-learning agent. |
 | 2       | Multi-armed Bandits                               | ⬜ TODO     |  |
 | 3       | Finite Markov Decision Processes                  | ⬜ TODO     |  |
 | 4       | Dynamic Programming                               | ⬜ TODO     |  |
