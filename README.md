@@ -12,13 +12,12 @@ Dependencies are specified in `pyproject.toml` and managed using `rye`. You can 
 `scripts/` contains codes and notebooks for each algorithm or example. `src/` includes modules, environments, and utilities used across different scripts.
 
 
-## Progress Chart
 ## ✅ Progress Chart
 
 | Chapter | Title                                             | Status      | Contents                                     |
 |---------|---------------------------------------------------|-------------|-------------------------------------------------------------|
 | 1       | Introduction                                      | ⬜ TODO     | Tic-tac-toe environment. Working on a simple TD-learning agent. |
-| 2       | Multi-armed Bandits                               | ⬜ TODO     |  |
+| 2       | Multi-armed Bandits                               | ⬜ TODO     | k-armed bandit environment. |
 | 3       | Finite Markov Decision Processes                  | ⬜ TODO     |  |
 | 4       | Dynamic Programming                               | ⬜ TODO     |  |
 | 5       | Monte Carlo Methods                               | ⬜ TODO     |  |
